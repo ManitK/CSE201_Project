@@ -7,21 +7,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox alignment="CENTER" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" prefHeight="449.0" prefWidth="299.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.PlayPageController">
+<VBox alignment="CENTER" fillWidth="false" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" prefHeight="500.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.PlayPageController">
 
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <AnchorPane fx:id="anchorPane" prefHeight="412.0" prefWidth="260.0">
-        <ImageView fitHeight="460.0" fitWidth="260.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../../../Images/playing.png" />
+    <AnchorPane fx:id="anchorPane" prefHeight="290.0" prefWidth="416.0">
+        <ImageView fitHeight="512.0" fitWidth="650.0" pickOnBounds="true">
+            <Image url="@../../../Images/Lake-1536x1229.png" />
         </ImageView>
-        <ImageView fx:id="player" fitHeight="33.0" fitWidth="16.0" layoutX="23.0" layoutY="264.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player" fitHeight="27.0" fitWidth="18.0" layoutX="18.0" layoutY="364.0" pickOnBounds="true" preserveRatio="true">
             <Image url="@../../../Images/avatar.png" />
         </ImageView>
-        <Rectangle fx:id="pillar1" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="18.0" layoutY="282.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="28.0" />
-        <Rectangle fx:id="pillar2" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="159.0" layoutY="282.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="18.0" />
-        <Rectangle fx:id="stick" arcHeight="5.0" arcWidth="5.0" fill="WHITE" layoutX="43.0" layoutY="282.0" smooth="false" stroke="WHITE" strokeType="INSIDE" width="3.0" />
+        <Rectangle fx:id="pillar1" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="20.0" layoutY="382.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="28.0" />
+        <Rectangle fx:id="pillar2" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="112.0" layoutY="382.0" smooth="false" stroke="BLACK" strokeType="INSIDE" width="45.0" />
+        <Rectangle fx:id="stick" arcHeight="5.0" arcWidth="5.0" fill="WHITE" layoutX="43.0" layoutY="382.0" smooth="false" stroke="WHITE" strokeType="INSIDE" width="3.0" />
+      <Rectangle fx:id="pillar3" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="235.0" layoutY="382.0" smooth="false" stroke="BLACK" strokeType="INSIDE" visible="false" width="72.0" />
+      <Rectangle fx:id="pillar4" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="441.0" layoutY="382.0" smooth="false" stroke="BLACK" strokeType="INSIDE" visible="false" width="20.0" />
+      <Rectangle fx:id="pillar5" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="496.0" layoutY="382.0" smooth="false" stroke="BLACK" strokeType="INSIDE" visible="false" width="89.0" />
+      <Rectangle fx:id="pillar6" arcHeight="5.0" arcWidth="5.0" height="128.0" layoutX="400.0" layoutY="382.0" smooth="false" stroke="BLACK" strokeType="INSIDE" visible="false" width="20.0" />
     </AnchorPane>
 </VBox>
