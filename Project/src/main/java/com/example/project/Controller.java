@@ -14,12 +14,9 @@ public class Controller {
     public void onStartButtonClick(MouseEvent mouseEvent) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("play-page.fxml"));
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root,700, 600);
-        scene.getRoot().requestFocus();
-
         // Get the Stage from the ActionEvent source
         Stage stage = (Stage) ((javafx.scene.Node) mouseEvent.getSource()).getScene().getWindow();
-        // Set the new scene on the stage
+        Scene scene = new Scene(root);
         stage.setTitle("Play Page");
         stage.setScene(scene);
         stage.show();

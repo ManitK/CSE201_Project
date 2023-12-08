@@ -11,201 +11,132 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.*;
 import javafx.util.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class PlayPageController implements Initializable {
     @FXML
     private AnchorPane anchorPane;
     @FXML
-    private Rectangle pillar1;
-    @FXML
-    private Rectangle pillar2;
-    @FXML
-    private Rectangle pillar3;
-    @FXML
-    private Rectangle pillar4;
-    @FXML
-    private Rectangle pillar5;
-    @FXML
-    private Rectangle pillar6;
-    @FXML
     private Rectangle stick;
     @FXML
     private ImageView player;
+
     public PlayerController player_controller;
     public PillarHandler pillar1_controller = new PillarHandler();
     public PillarHandler pillar2_controller = new PillarHandler();
     private PillarHandler stick_handler = new PillarHandler();
 
     private boolean spacePressed = false;
-    private AnimationTimer levelloop;
-    private AnimationTimer startgameloop;
     public double stickMaxY = 400;
     public int times_key_pressed = 0;
     private long start_time;
     public Boolean avatar_moved = false;
     public int level_number = 1;
+    Timeline timeline;
+    public ArrayList<Rectangle> pillar_list = new ArrayList<>();
 
-    public void AdjustPillarHandler(PillarHandler temp, Rectangle rect){
+    public void AdjustPillarHandler(PillarHandler temp, Rectangle rect) {
         temp.setPillar_height(rect.getHeight());
         temp.setPillar_width(rect.getWidth());
         temp.setPillar_position_x(rect.getLayoutX());
         temp.setPillar_position_y(rect.getLayoutY());
     }
 
-    public void AdjustStick(PillarHandler temp, Rectangle rect){
+    public void AdjustStick(PillarHandler temp, Rectangle rect) {
         rect.setLayoutX(temp.getPillar_position_x());
         rect.setLayoutY(temp.getPillar_position_y());
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        player_controller = new PlayerController();
-        player_controller.setPlayer_position_x(player.getLayoutX());
-        player_controller.setPlayer_position_y(player.getLayoutY());
-        game_loop(pillar1,pillar2);
-    }
+        Rectangle first_pillar = new Rectangle(0, 403, 67, 316);
+        Rectangle second_pillar = new Rectangle(200, 403, 100, 316);
+        anchorPane.getChildren().add(first_pillar);
+        anchorPane.getChildren().add(second_pillar);
+        pillar_list.add(first_pillar);
+        pillar_list.add(second_pillar);
 
-    @FXML
-    public void handleKeyPress(KeyEvent event) {
-        if (event.getCode() == KeyCode.SPACE && times_key_pressed == 1) {
-            avatar_moved = false;
-            times_key_pressed = 0;
-            startStickExpansion();
-        }
-    }
-    @FXML
-    public void handleKeyRelease(KeyEvent event) {
-        if (event.getCode() == KeyCode.SPACE) {
-            stopStickExpansion();
-        }
-    }
-    public void startStickExpansion() {
-        if (!spacePressed) {
-            spacePressed = true;
-            start_time = System.currentTimeMillis();
-            level_loop();
-        }
-    }
-    public void stopStickExpansion() {
-        spacePressed = false;
-        dropStick();
-        stoplevelloop();
-    }
-    public PillarHandler pillar3_controller = new PillarHandler();
-    private void game_loop(Rectangle c1, Rectangle c2) {
-        // Initialize the game loop
-        startgameloop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                AdjustPillarHandler(pillar1_controller, c1);
-                AdjustPillarHandler(pillar2_controller, c2);
+        anchorPane.setOnMousePressed(event -> {
+            timeline = new Timeline(new KeyFrame(Duration.millis(40),e->{
+                stick.setHeight(stick.getHeight()+10);
+                stick.setY(stick.getY()-10);
+            }));
+            timeline.setCycleCount(Animation.INDEFINITE);
+            timeline.play();
+        });
 
-                if (level_number > 1) {
-                    AdjustPillarHandler(pillar3_controller, pillar3);
-                    pillar1.setVisible(false); // Adjust visibility as needed
-                }
-
-                stick_handler.setPillar_width(3);
-                stick_handler.setPillar_height(0);
-                stick_handler.setPillar_position_x(pillar1_controller.getPillar_position_x() + pillar1_controller.getPillar_width() - 2);
-                stick_handler.setPillar_position_y(pillar1_controller.getPillar_position_y());
-                AdjustStick(stick_handler, stick);
-                times_key_pressed = 1;
+        anchorPane.setOnMouseReleased(event -> {
+            timeline.stop();
+            try {
+                dropStick();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-        };
-        startgameloop.start();
+        });
     }
 
-    private void game_loop_end() {
-            if (startgameloop != null) {
-                startgameloop.stop();
-            }
+    private void dropStick() throws InterruptedException {
+        stick.setWidth(stick.getHeight());
+        stick.setHeight(3);
+        stick.setY(stick.getY()+stick.getWidth());
+        move_avatar_ahead(stick.getWidth());
     }
 
-    private void level_loop() {
-        // Initialize the level loop
-        levelloop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (spacePressed) {
-                    updateStickHeight();
-                }
-            }
-        };
-        levelloop.start();
-    }
-
-    private void stoplevelloop() {
-        if (levelloop != null) {
-            levelloop.stop();
-        }
-    }
-
-    private void updateStickHeight() {
-        double current_time = System.currentTimeMillis();
-        double elapsed_time = current_time - start_time;
-        double newHeight = (elapsed_time/100.0)*10;
-        // error checking for max height
-        // Update the height of the stick & stick elongates in the reverse direction
-        stick.setHeight(newHeight);
-        stick.setLayoutY(stick_handler.getPillar_position_y() - newHeight);
-    }
-
-    // the function below rotates the rectangle stick 90 degrees to right about its bottom right corner
-    private void dropStick(){
-        RotateTransition rotate_stick = new RotateTransition(Duration.seconds(3), stick);
-        Rotate rotate = new Rotate(-90, stick.getWidth(),0);
-        stick.getTransforms().add(rotate);
-        move_avatar_ahead(stick.getHeight());
-        rotate_stick.play();
-    }
-
-    private void move_avatar_ahead(double distance){
+    private void move_avatar_ahead(double distance) throws InterruptedException {
         // the function below moves the avatar from the start pillar to the end pillar
         TranslateTransition move_avatar = new TranslateTransition(Duration.seconds(3), player);
-        move_avatar.setByX(distance + 25);
-        player_controller.setPlayer_position_x(player_controller.getPlayer_position_x()+distance+25);
-        player_controller.setPlayer_position_y(stick.getLayoutY());
+        move_avatar.setByX(distance + 20);
         avatar_moved = true;
         move_avatar.play();
-        check_survival();
+        move_avatar.setOnFinished(e->{
+
+            // Check if any part of the player is within the horizontal bounds of pillar2
+            if (pillar_list.get(level_number).getX() <= 5 + distance && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= player.getX() + distance) {
+                // the player has survived
+                System.out.println("You have survived");
+                go_to_next_level(distance);
+            }
+            else {
+                // the player has died
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Game Over");
+                alert.setHeaderText(null);
+                alert.setContentText("You have died. Game Over.");
+                alert.show();
+                System.exit(0);
+            }
+        });
     }
 
-    private void check_survival() {
+    private void go_to_next_level(double distance) {
 
-        // Check if any part of the player is within the horizontal bounds of pillar2
-        System.out.println(player_controller.getPlayer_position_x());
-        if (pillar2.getLayoutX() <= player_controller.getPlayer_position_x() && pillar2.getLayoutX() + pillar2_controller.getPillar_position_x() + pillar2_controller.getPillar_width() >= player_controller.getPlayer_position_x()) {
-            // the player has survived
-            System.out.println("You have survived");
+        TranslateTransition move_level1 = new TranslateTransition(Duration.seconds(3), pillar_list.get(level_number));
+        move_level1.setDuration(Duration.millis(1000));
+        pillar_list.get(level_number-1).setVisible(false);
+
+        //move_level1.setByX(-1*distance);
+        move_level1.setToX(-1*pillar_list.get(level_number).getX());
+
+        TranslateTransition move_level2 = new TranslateTransition(Duration.seconds(3), player);
+        move_level2.setDuration(Duration.millis(1000));
+        //move_level2.setByX(-1*distance);
+        move_level2.setToX(0);
+
+        move_level1.play();
+        move_level2.play();
+        move_level2.setOnFinished(e->{
+            Random random = new Random();
+            Rectangle next_pillar = new Rectangle( random.nextInt(150,319), 403, random.nextInt(50,100),316);
+            anchorPane.getChildren().add(next_pillar);
+            pillar_list.add(next_pillar);
             level_number++;
-            game_loop(pillar2,pillar3);
-        }
-        else {
-            // the player has died
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game Over");
-            alert.setHeaderText(null);
-            alert.setContentText("You have died. Game Over.");
-            alert.showAndWait();
-            game_loop_end();
-            System.exit(0);
-        }
+            System.out.println("hello");
+            stick.setHeight(0);
+            stick.setWidth(3);
+            stick.setX(20);
+            stick.setY(400);
+        });
     }
 }
-
-
-
-    /*
-    private void drop_avatar(){
-        if(avatar_moved){
-            // the function below moves the avatar from the start pillar to the end pillar
-            TranslateTransition move_avatar = new TranslateTransition(Duration.seconds(3), player);
-            move_avatar.setByY(500);
-            player_controller.setPlayer_position_x(stick.getLayoutX());
-            player_controller.setPlayer_position_y(stick.getLayoutY());
-            move_avatar.play();
-        }
-    }
-    */
