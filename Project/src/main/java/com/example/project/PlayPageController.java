@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
+import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import javafx.util.*;
 import java.net.*;
@@ -17,6 +18,10 @@ import java.util.ResourceBundle;
 
 public class PlayPageController implements Initializable {
     @FXML
+    public Text score_count;
+    @FXML
+    public Text cherry_count;
+    @FXML
     private AnchorPane anchorPane;
     @FXML
     private Rectangle stick;
@@ -24,6 +29,8 @@ public class PlayPageController implements Initializable {
     private ImageView player;
     @FXML
     private ImageView cherry;
+    private int current_score = 0;
+    private int current_cherry_count = 0;
 
     public PlayerController player_controller = new PlayerController();
     public PillarHandler pillar1_controller = new PillarHandler();
@@ -37,9 +44,10 @@ public class PlayPageController implements Initializable {
     public Boolean avatar_moved = false;
     public int level_number = 1;
     Timeline timeline;
+    Timeline collect_cherry;
     public ArrayList<Rectangle> pillar_list = new ArrayList<>();
-
     public Boolean reverse = false;
+    public Boolean cherry_collected = false;
 
     public void AdjustPillarHandler(PillarHandler temp, Rectangle rect) {
         temp.setPillar_height(rect.getHeight());
@@ -85,9 +93,8 @@ public class PlayPageController implements Initializable {
                     player.setRotate(player.getRotate() + 180);
                     player.setY(player.getY() - 30 );
                     player.setScaleX(player.getScaleX() * -1);
-                    reverse = true;
+                    reverse = false;
                 }
-
             }
         });
 
@@ -102,6 +109,17 @@ public class PlayPageController implements Initializable {
             }
         });
 
+        collect_cherry = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            //System.out.println(player.getTranslateX());
+            //System.out.println(player.getTranslateY());
+            if (reverse && player.getTranslateX() >= 150 && player.getTranslateX()<=160 &&  player.getTranslateY() >= 450 && player.getTranslateY()<=460) {
+                //System.out.println("check");
+                cherry_collected = true;
+                cherry.setVisible(false);
+            }
+        }));
+        collect_cherry.setCycleCount(Animation.INDEFINITE);
+        collect_cherry.play();
     }
 
     private void dropStick() throws InterruptedException {
@@ -113,20 +131,30 @@ public class PlayPageController implements Initializable {
 
     private void move_avatar_ahead(double distance) throws InterruptedException {
         // the function below moves the avatar from the start pillar to the end pillar
-        TranslateTransition move_avatar = new TranslateTransition(Duration.seconds(3), player);
+        TranslateTransition move_avatar = new TranslateTransition(Duration.seconds(2), player);
         move_avatar.setByX(distance + 20);
         avatar_moved = true;
         move_avatar.play();
         move_avatar.setOnFinished(e->{
-
-            // DO CORRECTLY
-            // Check if any part of the player is within the horizontal bounds of pillar2
-            if (pillar_list.get(level_number).getX() <= distance && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= player.getX() + distance) {
-                // the player has survived
-                System.out.println("You have survived");
-                go_to_next_level(distance);
+            if(reverse == false){
+                // DO CORRECTLY
+                // Check if any part of the player is within the horizontal bounds of pillar2
+                if (pillar_list.get(level_number).getX() <= distance && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= player.getX() + distance) {
+                    // the player has survived
+                    System.out.println("You have survived");
+                    go_to_next_level(distance);
+                }
+                else {
+                    // the player has died
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Game Over");
+                    alert.setHeaderText(null);
+                    alert.setContentText("You have died. Game Over.");
+                    alert.show();
+                    System.exit(0);
+                }
             }
-            else {
+            else if(reverse == true){
                 // the player has died
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Game Over");
@@ -160,12 +188,20 @@ public class PlayPageController implements Initializable {
             anchorPane.getChildren().add(next_pillar);
             pillar_list.add(next_pillar);
             level_number++;
-            System.out.println("hello");
+            System.out.println(level_number);
+            score_count.setText(String.valueOf(current_score + 100));
+            current_score = current_score + 100;
+            if(cherry_collected){
+                score_count.setText(String.valueOf(current_score + 500));
+                current_score = current_score + 500;
+                cherry_collected = false;
+            }
             stick.setHeight(0);
             stick.setWidth(3);
             stick.setX(20);
             stick.setY(400);
-            cherry.setX(pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 50);
+            cherry.setX(150);
+            cherry.setVisible(true);
         });
     }
 }
