@@ -31,16 +31,15 @@ public class PlayPageController implements Initializable {
     private ImageView cherry;
     private int current_score = 0;
     private int current_cherry_count = 0;
+    private double temp = 0;
 
     public PlayerController player_controller = new PlayerController();
     public PillarHandler pillar1_controller = new PillarHandler();
     public PillarHandler pillar2_controller = new PillarHandler();
     private PillarHandler stick_handler = new PillarHandler();
 
-    private boolean spacePressed = false;
     public double stickMaxY = 400;
     public int times_key_pressed = 0;
-    private long start_time;
     public Boolean avatar_moved = false;
     public int level_number = 1;
     Timeline timeline;
@@ -61,6 +60,16 @@ public class PlayPageController implements Initializable {
         rect.setLayoutY(temp.getPillar_position_y());
     }
 
+    /*
+    public void collect_cherry_func(){
+        collect_cherry = new Timeline(new KeyFrame(Duration.millis(75), e -> {
+
+        }));
+        collect_cherry.setCycleCount(Animation.INDEFINITE);
+        collect_cherry.play();
+    }
+
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Rectangle first_pillar = new Rectangle(0, 403, 67, 316);
@@ -108,18 +117,7 @@ public class PlayPageController implements Initializable {
                 }
             }
         });
-
-        collect_cherry = new Timeline(new KeyFrame(Duration.millis(100), e -> {
-            //System.out.println(player.getTranslateX());
-            //System.out.println(player.getTranslateY());
-            if (reverse && player.getTranslateX() >= 150 && player.getTranslateX()<=160 &&  player.getTranslateY() >= 450 && player.getTranslateY()<=460) {
-                //System.out.println("check");
-                cherry_collected = true;
-                cherry.setVisible(false);
-            }
-        }));
-        collect_cherry.setCycleCount(Animation.INDEFINITE);
-        collect_cherry.play();
+        //collect_cherry_func();
     }
 
     private void dropStick() throws InterruptedException {
@@ -130,16 +128,42 @@ public class PlayPageController implements Initializable {
     }
 
     private void move_avatar_ahead(double distance) throws InterruptedException {
+        temp = player.getX();
         // the function below moves the avatar from the start pillar to the end pillar
-        TranslateTransition move_avatar = new TranslateTransition(Duration.seconds(2), player);
-        move_avatar.setByX(distance + 20);
+        Timeline moving_avatar = new Timeline(new KeyFrame(Duration.millis(75), e -> {
+            System.out.println(player.getX() - temp);
+
+            if(level_number == 1){
+                if (cherry_collected == false && reverse && player.getX() <= 120 && player.getX()>=100 ) {
+                    System.out.println("check");
+                    cherry_collected = true;
+                    cherry.setVisible(false);
+                }
+            }
+            else{
+                if (cherry_collected == false && reverse && player.getX() - temp <= 177 && player.getX()- temp>=150 ) {
+                    System.out.println("check");
+                    cherry_collected = true;
+                    cherry.setVisible(false);
+                }
+                else{
+                    System.out.println("jhfkudh");
+                }
+            }
+
+            player.setX(player.getX() + (distance + 20)/20);
+
+        }));
+
+
+        moving_avatar.setCycleCount(20);
+        moving_avatar.play();
         avatar_moved = true;
-        move_avatar.play();
-        move_avatar.setOnFinished(e->{
+        moving_avatar.setOnFinished(e->{
             if(reverse == false){
                 // DO CORRECTLY
                 // Check if any part of the player is within the horizontal bounds of pillar2
-                if (pillar_list.get(level_number).getX() <= distance && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= player.getX() + distance) {
+                if (pillar_list.get(level_number).getX() <= distance + 20 && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= distance + 20) {
                     // the player has survived
                     System.out.println("You have survived");
                     go_to_next_level(distance);
@@ -167,7 +191,6 @@ public class PlayPageController implements Initializable {
     }
 
     private void go_to_next_level(double distance) {
-
         TranslateTransition move_level1 = new TranslateTransition(Duration.seconds(3), pillar_list.get(level_number));
         move_level1.setDuration(Duration.millis(1000));
         pillar_list.get(level_number-1).setVisible(false);
@@ -177,31 +200,36 @@ public class PlayPageController implements Initializable {
 
         TranslateTransition move_level2 = new TranslateTransition(Duration.seconds(3), player);
         move_level2.setDuration(Duration.millis(1000));
-        //move_level2.setByX(-1*distance);
-        move_level2.setToX(0);
+        move_level2.setByX(-1*distance-20);
+        //move_level2.setToX(0);
 
         move_level1.play();
         move_level2.play();
         move_level2.setOnFinished(e->{
             Random random = new Random();
-            Rectangle next_pillar = new Rectangle( random.nextInt(150,319), 403, random.nextInt(50,100),316);
+            Rectangle next_pillar = new Rectangle( random.nextInt(200,319), 403, random.nextInt(50,100),316);
             anchorPane.getChildren().add(next_pillar);
             pillar_list.add(next_pillar);
             level_number++;
             System.out.println(level_number);
             score_count.setText(String.valueOf(current_score + 100));
             current_score = current_score + 100;
+
             if(cherry_collected){
+                current_cherry_count++;
                 score_count.setText(String.valueOf(current_score + 500));
+                cherry_count.setText(String.valueOf(current_cherry_count));
                 current_score = current_score + 500;
                 cherry_collected = false;
             }
+
             stick.setHeight(0);
             stick.setWidth(3);
             stick.setX(20);
             stick.setY(400);
             cherry.setX(150);
             cherry.setVisible(true);
+            //collect_cherry_func();
         });
     }
 }
