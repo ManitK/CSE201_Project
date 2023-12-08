@@ -22,8 +22,10 @@ public class PlayPageController implements Initializable {
     private Rectangle stick;
     @FXML
     private ImageView player;
+    @FXML
+    private ImageView cherry;
 
-    public PlayerController player_controller;
+    public PlayerController player_controller = new PlayerController();
     public PillarHandler pillar1_controller = new PillarHandler();
     public PillarHandler pillar2_controller = new PillarHandler();
     private PillarHandler stick_handler = new PillarHandler();
@@ -36,6 +38,8 @@ public class PlayPageController implements Initializable {
     public int level_number = 1;
     Timeline timeline;
     public ArrayList<Rectangle> pillar_list = new ArrayList<>();
+
+    public Boolean reverse = false;
 
     public void AdjustPillarHandler(PillarHandler temp, Rectangle rect) {
         temp.setPillar_height(rect.getHeight());
@@ -53,28 +57,51 @@ public class PlayPageController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Rectangle first_pillar = new Rectangle(0, 403, 67, 316);
         Rectangle second_pillar = new Rectangle(200, 403, 100, 316);
+        cherry.setX((first_pillar.getX()+second_pillar.getX())/2);
         anchorPane.getChildren().add(first_pillar);
         anchorPane.getChildren().add(second_pillar);
         pillar_list.add(first_pillar);
         pillar_list.add(second_pillar);
 
         anchorPane.setOnMousePressed(event -> {
-            timeline = new Timeline(new KeyFrame(Duration.millis(40),e->{
-                stick.setHeight(stick.getHeight()+10);
-                stick.setY(stick.getY()-10);
-            }));
-            timeline.setCycleCount(Animation.INDEFINITE);
-            timeline.play();
+            if (event.getButton() == MouseButton.PRIMARY) {
+                timeline = new Timeline(new KeyFrame(Duration.millis(40), e -> {
+                    stick.setHeight(stick.getHeight() + 10);
+                    stick.setY(stick.getY() - 10);
+                }));
+                timeline.setCycleCount(Animation.INDEFINITE);
+                timeline.play();
+            }
+            else if (event.getButton() == MouseButton.SECONDARY) {
+                if(reverse == false){
+                    System.out.println("down");
+                    player.setRotate(player.getRotate() + 180);
+                    player.setY(player.getY() + 30 );
+                    player.setScaleX(player.getScaleX() * -1);
+                    reverse = true;
+                }
+                else{
+                    System.out.println("up");
+                    player.setRotate(player.getRotate() + 180);
+                    player.setY(player.getY() - 30 );
+                    player.setScaleX(player.getScaleX() * -1);
+                    reverse = true;
+                }
+
+            }
         });
 
         anchorPane.setOnMouseReleased(event -> {
-            timeline.stop();
-            try {
-                dropStick();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (event.getButton() == MouseButton.PRIMARY) {
+                timeline.stop();
+                try {
+                    dropStick();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
+
     }
 
     private void dropStick() throws InterruptedException {
@@ -92,8 +119,9 @@ public class PlayPageController implements Initializable {
         move_avatar.play();
         move_avatar.setOnFinished(e->{
 
+            // DO CORRECTLY
             // Check if any part of the player is within the horizontal bounds of pillar2
-            if (pillar_list.get(level_number).getX() <= 5 + distance && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= player.getX() + distance) {
+            if (pillar_list.get(level_number).getX() <= distance && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= player.getX() + distance) {
                 // the player has survived
                 System.out.println("You have survived");
                 go_to_next_level(distance);
@@ -137,6 +165,7 @@ public class PlayPageController implements Initializable {
             stick.setWidth(3);
             stick.setX(20);
             stick.setY(400);
+            cherry.setX(pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 50);
         });
     }
 }
