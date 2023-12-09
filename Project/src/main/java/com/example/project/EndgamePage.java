@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static com.example.project.LandingPage.current_cherry_count;
-import static com.example.project.LandingPage.current_score;
+import static com.example.project.LandingPage.*;
 
 public class EndgamePage {
 
@@ -28,8 +27,21 @@ public class EndgamePage {
         stage.show();
     }
 
+    @FXML
     public void onExitButtonClicked(MouseEvent mouseEvent) {
         System.exit(0);
+    }
+
+    @FXML
+    public void onRestartButtonClicked(MouseEvent mouseEvent) throws IOException {
+        // Load the landing page FXML file
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+        Parent root = loader.load();
+        Controller cont = loader.getController();
+        cont.update_score(String.valueOf(high_score));
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ((javafx.scene.Node) mouseEvent.getSource()).getScene().getWindow();
+        stage.setScene(scene);
     }
 
 }

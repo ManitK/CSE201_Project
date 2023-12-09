@@ -23,4 +23,9 @@
             <Font name="Futura Bold" size="50.0" />
         </font>
     </Text>
+   <Button layoutX="167.0" layoutY="379.0" onMouseClicked="#onRestartButtonClicked" text="RESTART">
+      <font>
+         <Font name="Futura Bold" size="25.0" />
+      </font>
+   </Button>
 </AnchorPane>

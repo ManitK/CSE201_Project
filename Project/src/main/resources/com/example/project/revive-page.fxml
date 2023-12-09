@@ -13,7 +13,7 @@
     <ImageView fitHeight="568.0" fitWidth="498.0" pickOnBounds="true">
         <Image url="@../../../Images/Desert-Landscape.png" />
     </ImageView>
-    <Button layoutX="185.0" layoutY="369.0" onMouseClicked="#onReviveButtonClicked" text="REVIVE">
+    <Button layoutX="185.0" layoutY="366.0" onMouseClicked="#onReviveButtonClicked" text="REVIVE">
         <font>
             <Font name="Futura Bold" size="25.0" />
         </font>
@@ -23,7 +23,12 @@
             <Font name="Futura Bold" size="40.0" />
         </font>
     </Text>
-   <Button layoutX="204.0" layoutY="448.0" onMouseClicked="#onExitButtonClicked" text="EXIT">
+   <Button layoutX="204.0" layoutY="299.0" onMouseClicked="#onExitButtonClicked" text="EXIT">
+      <font>
+         <Font name="Futura Bold" size="25.0" />
+      </font>
+   </Button>
+   <Button layoutX="176.0" layoutY="431.0" onMouseClicked="#onRestartButtonClicked" text="RESTART">
       <font>
          <Font name="Futura Bold" size="25.0" />
       </font>

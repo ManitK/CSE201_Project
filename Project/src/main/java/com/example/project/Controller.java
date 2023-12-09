@@ -4,16 +4,23 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
+
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import static com.example.project.LandingPage.high_score;
+
 public class Controller {
+    @FXML
+    public Text high_score_box;
     private MediaPlayer mediaPlayer;
 
     @FXML
@@ -50,4 +57,9 @@ public class Controller {
         });
         musicThread.start();
     }
+
+    public void update_score(String score) {
+        high_score_box.setText(score);
+    }
+
 }

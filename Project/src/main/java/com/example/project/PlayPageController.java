@@ -28,9 +28,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
-import static com.example.project.LandingPage.current_cherry_count;
-import static com.example.project.LandingPage.current_score;
 
+import static com.example.project.LandingPage.*;
 
 public class PlayPageController implements Initializable {
     @FXML
@@ -92,8 +91,11 @@ public class PlayPageController implements Initializable {
     @FXML
     public void saveButtonPressed(ActionEvent actionEvent) throws IOException {
         // Load the landing page FXML file
+        if_saved = true;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
         Parent root = loader.load();
+        Controller cont = loader.getController();
+        cont.update_score(String.valueOf(high_score));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
@@ -111,17 +113,24 @@ public class PlayPageController implements Initializable {
             q.printStackTrace();
         }
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         testrunner runner = new testrunner();
-
         pillar1_controller = FACTORY.getHandler("PILLAR");
         pillar2_controller = FACTORY.getHandler("PILLAR");
         stick_controller = FACTORY.getHandler("STICK");
 
-        score_count.setText(String.valueOf(current_score));
-        cherry_count.setText(String.valueOf(current_cherry_count));
+        if(if_saved){
+            score_count.setText(String.valueOf(current_score));
+            cherry_count.setText(String.valueOf(current_cherry_count));
+        }
+        else{
+            current_score = 0;
+            current_cherry_count = 0;
+            score_count.setText(String.valueOf(0));
+            cherry_count.setText(String.valueOf(0));
+        }
 
         Rectangle first_pillar = new Rectangle(0, 403, 67, 316);
         Rectangle second_pillar = new Rectangle(200, 403, 100, 316);
@@ -266,16 +275,16 @@ public class PlayPageController implements Initializable {
             pillar2_controller.setLevel_number(level_number+1);
 
             if(reverse == false){
-                // Check if any part of the player is within the horizontal bounds of pillar2
+                // Check if any part of the player is within the horizontal bounds of second pillar
                 if (pillar_list.get(level_number).getX() <= distance + 23 && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() >= distance + 20) {
-                    // the player has survived
                     //System.out.println("You have survived");
                     go_to_next_level(distance);
                 }
                 else {
                     if(current_cherry_count>=2){
-                        current_cherry_count = current_cherry_count - 1;
+                        current_cherry_count = current_cherry_count - 2;
                         //System.out.println("dead");
+                        if_saved = true;
                         FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
                         Parent root = null;
                         try {
@@ -289,6 +298,7 @@ public class PlayPageController implements Initializable {
                         currentStage.show();
                     }
                     else{
+                        if_saved = false;
                         FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
                         Parent root = null;
                         try {
@@ -305,7 +315,8 @@ public class PlayPageController implements Initializable {
             }
             else if(reverse == true){
                 if(current_cherry_count>=2){
-                    current_cherry_count = current_cherry_count - 1;
+                    if_saved = true;
+                    current_cherry_count = current_cherry_count - 2;
                     FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
                     Parent root = null;
                     try {
@@ -320,6 +331,7 @@ public class PlayPageController implements Initializable {
                 }
                 else{
                     // the player has died
+                    if_saved = false;
                     FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
                     Parent root = null;
                     try {
@@ -431,6 +443,10 @@ public class PlayPageController implements Initializable {
                 change_of_character(imagePath3);
             }
 
+            if(current_score>=high_score){
+                high_score = current_score;
+            }
+            if_saved = false;
             stick.setHeight(0);
             stick.setWidth(3);
             stick.setX(20);

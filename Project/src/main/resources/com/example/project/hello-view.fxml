@@ -13,7 +13,7 @@
      <ImageView fitHeight="550.0" fitWidth="500.0" pickOnBounds="true">
          <Image url="@../../../Images/Desert-Landscape.png" />
      </ImageView>
-     <Button layoutX="192.0" layoutY="206.0" onMouseClicked="#onStartButtonClick" text="START">
+     <Button layoutX="190.0" layoutY="259.0" onMouseClicked="#onStartButtonClick" text="START">
       <font>
          <Font name="Futura Bold" size="25.0" />
       </font>
@@ -81,6 +81,16 @@
    <Text layoutX="374.0" layoutY="411.0" stroke="WHITE" strokeType="OUTSIDE" text="100 Pts" wrappingWidth="73.578125">
       <font>
          <Font name="Futura Bold" size="17.0" />
+      </font>
+   </Text>
+   <Text fill="WHITE" layoutX="186.0" layoutY="205.0" stroke="#252424" strokeType="OUTSIDE" strokeWidth="2.0" text="High Score" textAlignment="CENTER" wrappingWidth="122.578125">
+      <font>
+         <Font name="Futura Bold" size="20.0" />
+      </font>
+   </Text>
+   <Text fx:id="high_score_box" fill="WHITE" layoutX="186.0" layoutY="232.0" stroke="#252424" strokeType="OUTSIDE" strokeWidth="2.0" text="0000" textAlignment="CENTER" wrappingWidth="122.578125">
+      <font>
+         <Font name="Futura Bold" size="20.0" />
       </font>
    </Text>
  </AnchorPane>
