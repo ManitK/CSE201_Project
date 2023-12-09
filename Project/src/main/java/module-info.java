@@ -7,6 +7,7 @@ module com.example.project {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
+    requires javafx.media;
 
     opens com.example.project to javafx.fxml;
     exports com.example.project;

@@ -12,12 +12,15 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import javafx.stage.Stage;
 import javafx.util.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -57,6 +60,7 @@ public class PlayPageController implements Initializable {
     public int level_number = 1;
     Timeline timeline;
     Timeline collect_cherry;
+    Timeline sound;
     public ArrayList<Rectangle> pillar_list = new ArrayList<>();
     public Boolean reverse = false;
     public Boolean cherry_collected = false;
@@ -85,6 +89,7 @@ public class PlayPageController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         score_count.setText(String.valueOf(current_score));
         cherry_count.setText(String.valueOf(current_cherry_count));
 
@@ -180,11 +185,11 @@ public class PlayPageController implements Initializable {
                 // Check if any part of the player is within the horizontal bounds of pillar2
                 if (pillar_list.get(level_number).getX() <= distance + 20 && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= distance + 20) {
                     // the player has survived
-                    System.out.println("You have survived");
+                    //System.out.println("You have survived");
                     go_to_next_level(distance);
                 }
                 else {
-                    if(current_cherry_count>=1){
+                    if(current_cherry_count>=5){
                         current_cherry_count = current_cherry_count - 1;
                         System.out.println("dead-1");
                         FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
@@ -215,7 +220,7 @@ public class PlayPageController implements Initializable {
                 }
             }
             else if(reverse == true){
-                if(current_cherry_count>=2){
+                if(current_cherry_count>=5){
                     current_cherry_count = current_cherry_count - 1;
                     FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
                     Parent root = null;
@@ -286,7 +291,6 @@ public class PlayPageController implements Initializable {
             stick.setY(400);
             cherry.setX(150);
             cherry.setVisible(true);
-            //collect_cherry_func();
         });
     }
 }
