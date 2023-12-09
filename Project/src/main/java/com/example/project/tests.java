@@ -2,6 +2,8 @@ package com.example.project;
 
 import org.junit.Test;
 
+import java.io.InputStream;
+
 import static org.junit.Assert.*;
 
 public class tests {
@@ -25,6 +27,12 @@ public class tests {
             temp = false;
         }
         assertFalse(!temp);
+    }
+
+    @Test
+    public void test3(){
+        InputStream imageStream = getClass().getResourceAsStream("/Images/avatar3.png");
+        assertNotNull(imageStream);
     }
 
 }

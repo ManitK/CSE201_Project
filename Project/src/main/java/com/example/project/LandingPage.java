@@ -5,6 +5,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 import java.io.IOException;
 
@@ -22,6 +25,13 @@ public class LandingPage extends Application {
     }
 
     public static void main(String[] args) {
+
+        Result result = JUnitCore.runClasses(tests.class);
+        for (Failure i : result.getFailures()) {
+            System.out.println(i.toString());
+        }
+        System.out.println("ALL TESTS PASSED - " + result.wasSuccessful());
+
         launch();
     }
 }

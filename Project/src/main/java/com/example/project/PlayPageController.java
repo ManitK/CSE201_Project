@@ -55,8 +55,7 @@ public class PlayPageController implements Initializable {
     // DESIGN PATTERNS USED -
     // 1. FACTORY : TO GET DIFFERENT HANDLERS FOR DIFFERENT OBJECTS
     // 2. FLYWEIGHT : FOR CREATING UNIQUE PILLARS OF DIFFERENT DIMENSION FOR EACH NEW LEVEL
-    // 3. ADAPTER
-    
+
     HandlerFactory FACTORY = new HandlerFactory();
     Flyweight PillarFlyweight = new Flyweight();
 
@@ -100,7 +99,19 @@ public class PlayPageController implements Initializable {
         stage.setScene(scene);
     }
 
-
+    private void change_of_character(String character_to_become) throws NullPointerException{
+        try {
+            InputStream imageStream = getClass().getResourceAsStream(character_to_become);
+            Image newImage = new Image(imageStream);
+            player.setImage(newImage);
+            player.setFitHeight(27);
+            player.setFitWidth(18);
+        }
+        catch (Exception q) {
+            q.printStackTrace();
+        }
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         testrunner runner = new testrunner();
@@ -127,12 +138,34 @@ public class PlayPageController implements Initializable {
 
         anchorPane.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                timeline = new Timeline(new KeyFrame(Duration.millis(40), e -> {
-                    stick.setHeight(stick.getHeight() + 10);
-                    stick.setY(stick.getY() - 10);
-                }));
-                timeline.setCycleCount(Animation.INDEFINITE);
-                timeline.play();
+                try{
+                    if(times_key_pressed == 0){
+                        times_key_pressed = 1;
+                        timeline = new Timeline(new KeyFrame(Duration.millis(40), e -> {
+                            stick.setHeight(stick.getHeight() + 10);
+                            stick.setY(stick.getY() - 10);
+                        }));
+                        timeline.setCycleCount(Animation.INDEFINITE);
+                        timeline.play();
+                    }
+                    else{
+                        throw new MultipleSticks("Multiple Times Stick Extended");
+                    }
+                }
+                catch(MultipleSticks e){
+                    System.out.println(e.getMessage());
+                    FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, 500, 550);
+                    Stage currentStage = (Stage) anchorPane.getScene().getWindow();
+                    currentStage.setScene(scene);
+                    currentStage.show();
+                }
             }
             else if (event.getButton() == MouseButton.SECONDARY) {
                 if(reverse == false){
@@ -242,7 +275,7 @@ public class PlayPageController implements Initializable {
                 else {
                     if(current_cherry_count>=2){
                         current_cherry_count = current_cherry_count - 1;
-                        System.out.println("dead-1");
+                        //System.out.println("dead");
                         FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
                         Parent root = null;
                         try {
@@ -367,7 +400,7 @@ public class PlayPageController implements Initializable {
                 cherry_collected = false;
             }
 
-            if(current_score>=1200){
+            if(current_score>=2000){
                 avatar2 playerimage2= new avatar2(player);
                 String imagePath2 = "/Images/avatar3.png";
                 change_of_character(imagePath2);
@@ -404,25 +437,10 @@ public class PlayPageController implements Initializable {
             stick.setY(400);
             cherry.setX(150);
             cherry.setVisible(true);
-
+            times_key_pressed = 0;
             stick_controller.setStick_position_x(stick.getX());
             stick_controller.setStick_position_y(stick.getY());
         });
     }
-
-    private void change_of_character(String character_to_become){
-        try {
-            InputStream imageStream = getClass().getResourceAsStream(character_to_become);
-            if (imageStream != null) {
-                Image newImage = new Image(imageStream);
-                //System.out.println("0");
-                player.setImage(newImage);
-                player.setFitHeight(27);
-                player.setFitWidth(18);}
-            else {System.out.println("Image not found: " + character_to_become);}
-        }
-        catch (Exception q) {q.printStackTrace();}
-    }
-
 
 }

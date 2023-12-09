@@ -10,6 +10,6 @@ public class testrunner{
         for (Failure i : result.getFailures()) {
             System.out.println(i.toString());
         }
-        System.out.println(result.wasSuccessful());
+        System.out.println("ALL TESTS PASSED - " + result.wasSuccessful());
     }
 }
