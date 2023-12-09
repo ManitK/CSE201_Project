@@ -170,9 +170,7 @@ public class PlayPageController implements Initializable {
                     //System.out.println("jhfkudh");
                 }
             }
-
             player.setX(player.getX() + (distance + 20)/20);
-
         }));
 
 
