@@ -9,19 +9,78 @@
 
 <!-- hello-view.fxml -->
 
-
- <AnchorPane prefHeight="485.0" prefWidth="401.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.Controller">
+<AnchorPane prefHeight="485.0" prefWidth="401.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.Controller">
      <ImageView fitHeight="550.0" fitWidth="500.0" pickOnBounds="true">
          <Image url="@../../../Images/Desert-Landscape.png" />
      </ImageView>
-     <Button layoutX="192.0" layoutY="308.0" onMouseClicked="#onStartButtonClick" text="START">
+     <Button layoutX="192.0" layoutY="206.0" onMouseClicked="#onStartButtonClick" text="START">
       <font>
          <Font name="Futura Bold" size="25.0" />
       </font>
    </Button>
-   <Text layoutX="170.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="STICK HERO" wrappingWidth="158.578125">
+   <Text layoutX="170.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="STICK HERO" wrappingWidth="158.578125">
       <font>
          <Font name="Futura Bold" size="50.0" />
+      </font>
+   </Text>
+   <ImageView fitHeight="50.0" fitWidth="47.0" layoutX="33.0" layoutY="324.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../../../Images/avatar.png" />
+      </image>
+   </ImageView>
+   <ImageView fitHeight="59.0" fitWidth="55.0" layoutX="33.0" layoutY="392.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../../../Images/avatar2.png" />
+      </image>
+   </ImageView>
+   <ImageView fitHeight="50.0" fitWidth="47.0" layoutX="33.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../../../Images/avatar3.png" />
+      </image>
+   </ImageView>
+   <Text fill="WHITE" layoutX="106.0" layoutY="356.0" stroke="#252424" strokeType="OUTSIDE" strokeWidth="2.0" text="STICK HERO (1x Pts)" wrappingWidth="222.578125">
+      <font>
+         <Font name="Futura Bold" size="20.0" />
+      </font>
+   </Text>
+   <Text fill="WHITE" layoutX="106.0" layoutY="413.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="2.0" text="MARIO (2x Pts)" wrappingWidth="167.578125">
+      <font>
+         <Font name="Futura Bold" size="20.0" />
+      </font>
+   </Text>
+   <Text layoutX="106.0" layoutY="437.0" stroke="WHITE" strokeType="OUTSIDE" text="Unlocks at 500 Pts" wrappingWidth="174.578125">
+      <font>
+         <Font name="Futura Bold" size="17.0" />
+      </font>
+   </Text>
+   <Text fill="WHITE" layoutX="110.0" layoutY="485.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="2.0" text="SONIC (3x Pts)" wrappingWidth="167.578125">
+      <font>
+         <Font name="Futura Bold" size="20.0" />
+      </font>
+   </Text>
+   <Text layoutX="110.0" layoutY="512.0" stroke="WHITE" strokeType="OUTSIDE" text="Unlocks at 1000 Pts" wrappingWidth="184.578125">
+      <font>
+         <Font name="Futura Bold" size="17.0" />
+      </font>
+   </Text>
+   <ImageView fitHeight="50.0" fitWidth="47.0" layoutX="380.0" layoutY="428.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../../../Images/cherry.png" />
+      </image>
+   </ImageView>
+   <Text layoutX="374.0" layoutY="498.0" stroke="WHITE" strokeType="OUTSIDE" text="300 Pts" wrappingWidth="73.578125">
+      <font>
+         <Font name="Futura Bold" size="17.0" />
+      </font>
+   </Text>
+   <Text fill="WHITE" layoutX="354.0" layoutY="382.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="2.0" text="Each Level" wrappingWidth="114.0">
+      <font>
+         <Font name="Futura Bold" size="20.0" />
+      </font>
+   </Text>
+   <Text layoutX="374.0" layoutY="411.0" stroke="WHITE" strokeType="OUTSIDE" text="100 Pts" wrappingWidth="73.578125">
+      <font>
+         <Font name="Futura Bold" size="17.0" />
       </font>
    </Text>
  </AnchorPane>

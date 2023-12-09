@@ -13,14 +13,19 @@
     <ImageView fitHeight="568.0" fitWidth="498.0" pickOnBounds="true">
         <Image url="@../../../Images/Desert-Landscape.png" />
     </ImageView>
-    <Button layoutX="185.0" layoutY="308.0" onMouseClicked="#onReviveButtonClicked" text="REVIVE">
+    <Button layoutX="185.0" layoutY="369.0" onMouseClicked="#onReviveButtonClicked" text="REVIVE">
         <font>
             <Font name="Futura Bold" size="25.0" />
         </font>
     </Button>
-    <Text layoutX="122.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="USE 5 CHERRIES TO REVIVE" textAlignment="CENTER" wrappingWidth="281.578125">
+    <Text layoutX="111.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="USE 2 CHERRIES TO REVIVE?" textAlignment="CENTER" wrappingWidth="281.578125">
         <font>
-            <Font name="Futura Bold" size="50.0" />
+            <Font name="Futura Bold" size="40.0" />
         </font>
     </Text>
+   <Button layoutX="204.0" layoutY="448.0" onMouseClicked="#onExitButtonClicked" text="EXIT">
+      <font>
+         <Font name="Futura Bold" size="25.0" />
+      </font>
+   </Button>
 </AnchorPane>

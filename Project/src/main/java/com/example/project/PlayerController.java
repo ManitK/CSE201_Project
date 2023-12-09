@@ -1,6 +1,6 @@
 package com.example.project;
 
-public class PlayerController {
+public class PlayerController implements HandlerType{
     private double player_position_x;
     private double player_position_y;
 
@@ -21,4 +21,29 @@ public class PlayerController {
     }
 
 
+    @Override
+    public void setHeight(double height) {
+
+    }
+
+    @Override
+    public void setWidth(double width) {
+
+    }
+
+    @Override
+    public void setStick_position_x(double x) {
+
+    }
+
+    @Override
+    public void setStick_position_y(double y) {
+
+    }
+
+    @Override
+    public void setLevel_number(int i) {
+
+    }
 }
+

@@ -1,6 +1,6 @@
 package com.example.project;
 
-public class CherryHandler{
+public class CherryHandler implements HandlerType{
     private int distance_from_start_pillar;
     private Boolean if_on_end_pillar;
 
@@ -20,4 +20,28 @@ public class CherryHandler{
         this.if_on_end_pillar = if_on_end_pillar;
     }
 
+    @Override
+    public void setHeight(double height) {
+
+    }
+
+    @Override
+    public void setWidth(double width) {
+
+    }
+
+    @Override
+    public void setStick_position_x(double x) {
+
+    }
+
+    @Override
+    public void setStick_position_y(double y) {
+
+    }
+
+    @Override
+    public void setLevel_number(int i) {
+
+    }
 }

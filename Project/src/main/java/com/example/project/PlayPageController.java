@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -22,6 +23,7 @@ import javafx.util.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,6 +39,7 @@ public class PlayPageController implements Initializable {
     public Text cherry_count;
     @FXML
     public Button save_button;
+    public Text char_upgraded;
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -49,10 +52,16 @@ public class PlayPageController implements Initializable {
     public static int current_cherry_count = 0;
     private double temp = 0;
 
+    // DESIGN PATTERNS USED -
+    // 1. FACTORY : TO GET DIFFERENT HANDLERS FOR DIFFERENT OBJECTS
+    // 2. FLYWEIGHT : FOR CREATING UNIQUE PILLARS OF DIFFERENT DIMENSION FOR EACH NEW LEVEL
+    HandlerFactory FACTORY = new HandlerFactory();
+    Flyweight PillarFlyweight = new Flyweight();
+
     public PlayerController player_controller = new PlayerController();
-    public PillarHandler pillar1_controller = new PillarHandler();
-    public PillarHandler pillar2_controller = new PillarHandler();
-    private PillarHandler stick_handler = new PillarHandler();
+    public HandlerType pillar1_controller;
+    public HandlerType pillar2_controller;
+    public HandlerType stick_controller;
 
     public double stickMaxY = 400;
     public int times_key_pressed = 0;
@@ -64,6 +73,8 @@ public class PlayPageController implements Initializable {
     public ArrayList<Rectangle> pillar_list = new ArrayList<>();
     public Boolean reverse = false;
     public Boolean cherry_collected = false;
+    public Boolean avatar_changed1 = false;
+    public Boolean avatar_changed2 = false;
 
     public void AdjustPillarHandler(PillarHandler temp, Rectangle rect) {
         temp.setPillar_height(rect.getHeight());
@@ -72,10 +83,11 @@ public class PlayPageController implements Initializable {
         temp.setPillar_position_y(rect.getLayoutY());
     }
 
-    public void AdjustStick(PillarHandler temp, Rectangle rect) {
-        rect.setLayoutX(temp.getPillar_position_x());
-        rect.setLayoutY(temp.getPillar_position_y());
+    public void AdjustStick(StickHandler temp, Rectangle rect) {
+        temp.setStick_position_x(rect.getX());
+        temp.setStick_position_y(rect.getY());
     }
+
     @FXML
     public void saveButtonPressed(ActionEvent actionEvent) throws IOException {
         // Load the landing page FXML file
@@ -90,6 +102,10 @@ public class PlayPageController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        pillar1_controller = FACTORY.getHandler("PILLAR");
+        pillar2_controller = FACTORY.getHandler("PILLAR");
+        stick_controller = FACTORY.getHandler("STICK");
+
         score_count.setText(String.valueOf(current_score));
         cherry_count.setText(String.valueOf(current_cherry_count));
 
@@ -100,6 +116,11 @@ public class PlayPageController implements Initializable {
         anchorPane.getChildren().add(second_pillar);
         pillar_list.add(first_pillar);
         pillar_list.add(second_pillar);
+
+        pillar1_controller.setHeight(first_pillar.getHeight());
+        pillar2_controller.setHeight(second_pillar.getHeight());
+        pillar1_controller.setWidth(first_pillar.getWidth());
+        pillar2_controller.setWidth(second_pillar.getWidth());
 
         anchorPane.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
@@ -126,6 +147,12 @@ public class PlayPageController implements Initializable {
                     reverse = false;
                 }
             }
+
+            stick_controller.setStick_position_x(stick.getX());
+            stick_controller.setStick_position_y(stick.getY());
+            AdjustPillarHandler((PillarHandler) pillar1_controller, pillar_list.get(0));
+            AdjustPillarHandler((PillarHandler) pillar2_controller, pillar_list.get(1));
+            AdjustStick((StickHandler) stick_controller, stick);
         });
 
         anchorPane.setOnMouseReleased(event -> {
@@ -133,18 +160,39 @@ public class PlayPageController implements Initializable {
                 timeline.stop();
                 try {
                     dropStick();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | Stick_Out_Of_Bounds e) {
                     throw new RuntimeException(e);
                 }
             }
         });
     }
 
-    private void dropStick() throws InterruptedException {
-        stick.setWidth(stick.getHeight());
-        stick.setHeight(3);
-        stick.setY(stick.getY()+stick.getWidth());
-        move_avatar_ahead(stick.getWidth());
+    private void dropStick() throws InterruptedException,Stick_Out_Of_Bounds{
+        try{
+            if(stick.getHeight() >= 400){
+                throw new Stick_Out_Of_Bounds();
+            }
+            else{
+                stick.setWidth(stick.getHeight());
+                stick.setHeight(3);
+                stick.setY(stick.getY()+stick.getWidth());
+                move_avatar_ahead(stick.getWidth());
+            }
+        }
+        catch(Stick_Out_Of_Bounds e){
+            System.out.println(e.getMessage());
+            FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
+            Parent root = null;
+            try {
+                root = fxmlLoader.load();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            Scene scene = new Scene(root, 500, 550);
+            Stage currentStage = (Stage) anchorPane.getScene().getWindow();
+            currentStage.setScene(scene);
+            currentStage.show();
+        }
     }
 
     private void move_avatar_ahead(double distance) throws InterruptedException {
@@ -166,9 +214,6 @@ public class PlayPageController implements Initializable {
                     cherry_collected = true;
                     cherry.setVisible(false);
                 }
-                else{
-                    //System.out.println("jhfkudh");
-                }
             }
             player.setX(player.getX() + (distance + 20)/20);
         }));
@@ -178,16 +223,21 @@ public class PlayPageController implements Initializable {
         moving_avatar.play();
         avatar_moved = true;
         moving_avatar.setOnFinished(e->{
+
+            player_controller.setPlayer_position_x(distance);
+            player_controller.setPlayer_position_y(383);
+            pillar1_controller.setLevel_number(level_number+1);
+            pillar2_controller.setLevel_number(level_number+1);
+
             if(reverse == false){
-                // DO CORRECTLY
                 // Check if any part of the player is within the horizontal bounds of pillar2
-                if (pillar_list.get(level_number).getX() <= distance + 20 && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() + 5 >= distance + 20) {
+                if (pillar_list.get(level_number).getX() <= distance + 23 && pillar_list.get(level_number).getX() + pillar_list.get(level_number).getWidth() >= distance + 20) {
                     // the player has survived
                     //System.out.println("You have survived");
                     go_to_next_level(distance);
                 }
                 else {
-                    if(current_cherry_count>=5){
+                    if(current_cherry_count>=2){
                         current_cherry_count = current_cherry_count - 1;
                         System.out.println("dead-1");
                         FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
@@ -218,7 +268,7 @@ public class PlayPageController implements Initializable {
                 }
             }
             else if(reverse == true){
-                if(current_cherry_count>=5){
+                if(current_cherry_count>=2){
                     current_cherry_count = current_cherry_count - 1;
                     FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
                     Parent root = null;
@@ -255,6 +305,9 @@ public class PlayPageController implements Initializable {
         move_level1.setDuration(Duration.millis(1000));
         pillar_list.get(level_number-1).setVisible(false);
 
+        pillar1_controller.setLevel_number(level_number-1);
+        pillar2_controller.setLevel_number(level_number-1);
+
         //move_level1.setByX(-1*distance);
         move_level1.setToX(-1*pillar_list.get(level_number).getX());
 
@@ -266,21 +319,80 @@ public class PlayPageController implements Initializable {
         move_level1.play();
         move_level2.play();
         move_level2.setOnFinished(e->{
-            Random random = new Random();
-            Rectangle next_pillar = new Rectangle( random.nextInt(200,319), 403, random.nextInt(50,100),316);
+
+            //Random random = new Random();
+            //Rectangle next_pillar = new Rectangle( random.nextInt(200,319), 403, random.nextInt(50,100),316);
+            Rectangle next_pillar =  PillarFlyweight.getNextPillar(level_number);
             anchorPane.getChildren().add(next_pillar);
             pillar_list.add(next_pillar);
             level_number++;
+
+            pillar1_controller.setLevel_number(level_number);
+            pillar2_controller.setLevel_number(level_number);
+
             //System.out.println(level_number);
-            score_count.setText(String.valueOf(current_score + 100));
-            current_score = current_score + 100;
+            if(!avatar_changed1 && !avatar_changed2){
+                score_count.setText(String.valueOf(current_score + 100));
+                current_score = current_score + 100;
+            }
+            else if(avatar_changed1 && !avatar_changed2){
+                score_count.setText(String.valueOf(current_score + 200));
+                current_score = current_score + 200;
+            }
+            else if(avatar_changed2){
+                score_count.setText(String.valueOf(current_score + 300));
+                current_score = current_score + 300;
+            }
 
             if(cherry_collected){
                 current_cherry_count++;
-                score_count.setText(String.valueOf(current_score + 500));
-                cherry_count.setText(String.valueOf(current_cherry_count));
-                current_score = current_score + 500;
+                if(!avatar_changed1 && !avatar_changed2){
+                    score_count.setText(String.valueOf(current_score + 300));
+                    cherry_count.setText(String.valueOf(current_cherry_count));
+                    current_score = current_score + 300;
+                }
+                else if(avatar_changed1 && !avatar_changed2){
+                    score_count.setText(String.valueOf(current_score + 2*300));
+                    cherry_count.setText(String.valueOf(current_cherry_count));
+                    current_score = current_score + 2*300;
+                }
+                else if(avatar_changed2){
+                    score_count.setText(String.valueOf(current_score + 3*300));
+                    cherry_count.setText(String.valueOf(current_cherry_count));
+                    current_score = current_score + 3*300;
+                }
                 cherry_collected = false;
+            }
+
+            if(current_score>=1200){
+                avatar2 playerimage2= new avatar2(player);
+                String imagePath2 = "/Images/avatar3.png";
+                change_of_character(imagePath2);
+                if(avatar_changed1){
+                    char_upgraded.setVisible(false);
+                }
+                if(!avatar_changed1){
+                    avatar_changed1 = true;
+                    char_upgraded.setVisible(true);
+                }
+
+            }
+            else if(current_score>=500){
+                avatar1 playerimage= new avatar1(player);
+                String imagePath = "/Images/avatar2.png";
+                change_of_character(imagePath);
+                if(avatar_changed2){
+                    char_upgraded.setVisible(false);
+                }
+                if(!avatar_changed2){
+                    avatar_changed2 = true;
+                    char_upgraded.setVisible(true);
+                }
+            }
+            else{
+                avatar3 playerimage3= new avatar3(player);
+                String imagePath3 = "/Images/avatar.png";
+                change_of_character(imagePath3);
             }
 
             stick.setHeight(0);
@@ -289,6 +401,25 @@ public class PlayPageController implements Initializable {
             stick.setY(400);
             cherry.setX(150);
             cherry.setVisible(true);
+
+            stick_controller.setStick_position_x(stick.getX());
+            stick_controller.setStick_position_y(stick.getY());
         });
     }
+
+    private void change_of_character(String character_to_become){
+        try {
+            InputStream imageStream = getClass().getResourceAsStream(character_to_become);
+            if (imageStream != null) {
+                Image newImage = new Image(imageStream);
+                //System.out.println("0");
+                player.setImage(newImage);
+                player.setFitHeight(27);
+                player.setFitWidth(18);}
+            else {System.out.println("Image not found: " + character_to_become);}
+        }
+        catch (Exception q) {q.printStackTrace();}
+    }
+
+
 }

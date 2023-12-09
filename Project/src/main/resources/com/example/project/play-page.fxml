@@ -41,7 +41,7 @@
          <Font name="Futura Bold" size="13.0" />
       </font>
    </Text>
-    <Button fx:id="save_button" layoutX="32.0" layoutY="28.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="60.0" text="SAVE" onAction="#saveButtonPressed" >
+    <Button fx:id="save_button" layoutX="32.0" layoutY="28.0" mnemonicParsing="false" onAction="#saveButtonPressed" prefHeight="24.0" prefWidth="60.0" text="SAVE">
       <font>
          <Font name="System Bold" size="13.0" />
       </font>
@@ -49,4 +49,9 @@
          <Blend mode="SCREEN" />
       </effect>
    </Button>
+   <Text fx:id="char_upgraded" layoutX="154.0" layoutY="111.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CHARACTER UPGRADED!" visible="false" wrappingWidth="113.5670166015625">
+      <font>
+         <Font name="Futura Bold" size="17.0" />
+      </font>
+   </Text>
 </AnchorPane>
