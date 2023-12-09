@@ -200,16 +200,6 @@ public class PlayPageController implements Initializable {
                         currentStage.show();
                     }
                     else{
-                        // the player has died
-                        /*
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Game Over");
-                        alert.setHeaderText(null);
-                        alert.setContentText("You have died. Game Over.");
-                        alert.show();
-                        System.exit(0);
-                         */
-
                         FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
                         Parent root = null;
                         try {
@@ -241,12 +231,17 @@ public class PlayPageController implements Initializable {
                 }
                 else{
                     // the player has died
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Game Over");
-                    alert.setHeaderText(null);
-                    alert.setContentText("You have died. Game Over.");
-                    alert.show();
-                    System.exit(0);
+                    FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, 500, 550);
+                    Stage currentStage = (Stage) anchorPane.getScene().getWindow();
+                    currentStage.setScene(scene);
+                    currentStage.show();
                 }
             }
         });
