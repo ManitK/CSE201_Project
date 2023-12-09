@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <!-- hello-view.fxml -->
 
-<VBox alignment="CENTER" prefHeight="410.0" prefWidth="245.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.Controller">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-    <AnchorPane prefHeight="363.0" prefWidth="205.0">
-        <ImageView fitHeight="338.0" fitWidth="205.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../../../Images/landing.png" />
-        </ImageView>
-        <Button layoutX="80.0" layoutY="160.0" onMouseClicked="#onStartButtonClick" text="Start" />
-    </AnchorPane>
-</VBox>
+
+ <AnchorPane prefHeight="485.0" prefWidth="401.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.Controller">
+     <ImageView fitHeight="550.0" fitWidth="500.0" pickOnBounds="true">
+         <Image url="@../../../Images/Desert-Landscape.png" />
+     </ImageView>
+     <Button layoutX="192.0" layoutY="308.0" onMouseClicked="#onStartButtonClick" text="START">
+      <font>
+         <Font name="Futura Bold" size="25.0" />
+      </font>
+   </Button>
+   <Text layoutX="170.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="STICK HERO" wrappingWidth="158.578125">
+      <font>
+         <Font name="Futura Bold" size="50.0" />
+      </font>
+   </Text>
+ </AnchorPane>

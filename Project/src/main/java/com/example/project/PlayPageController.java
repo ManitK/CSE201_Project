@@ -1,26 +1,39 @@
 package com.example.project;
 
 import javafx.animation.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.*;
+import javafx.stage.Stage;
 import javafx.util.*;
+
+import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
+import static com.example.project.LandingPage.current_cherry_count;
+import static com.example.project.LandingPage.current_score;
+
 
 public class PlayPageController implements Initializable {
     @FXML
     public Text score_count;
     @FXML
     public Text cherry_count;
+    @FXML
+    public Button save_button;
     @FXML
     private AnchorPane anchorPane;
     @FXML
@@ -29,8 +42,8 @@ public class PlayPageController implements Initializable {
     private ImageView player;
     @FXML
     private ImageView cherry;
-    private int current_score = 0;
-    private int current_cherry_count = 0;
+    public static int current_score = 0;
+    public static int current_cherry_count = 0;
     private double temp = 0;
 
     public PlayerController player_controller = new PlayerController();
@@ -59,19 +72,22 @@ public class PlayPageController implements Initializable {
         rect.setLayoutX(temp.getPillar_position_x());
         rect.setLayoutY(temp.getPillar_position_y());
     }
-
-    /*
-    public void collect_cherry_func(){
-        collect_cherry = new Timeline(new KeyFrame(Duration.millis(75), e -> {
-
-        }));
-        collect_cherry.setCycleCount(Animation.INDEFINITE);
-        collect_cherry.play();
+    @FXML
+    public void saveButtonPressed(ActionEvent actionEvent) throws IOException {
+        // Load the landing page FXML file
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ((javafx.scene.Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(scene);
     }
 
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        score_count.setText(String.valueOf(current_score));
+        cherry_count.setText(String.valueOf(current_cherry_count));
+
         Rectangle first_pillar = new Rectangle(0, 403, 67, 316);
         Rectangle second_pillar = new Rectangle(200, 403, 100, 316);
         cherry.setX((first_pillar.getX()+second_pillar.getX())/2);
@@ -91,14 +107,14 @@ public class PlayPageController implements Initializable {
             }
             else if (event.getButton() == MouseButton.SECONDARY) {
                 if(reverse == false){
-                    System.out.println("down");
+                    //System.out.println("down");
                     player.setRotate(player.getRotate() + 180);
                     player.setY(player.getY() + 30 );
                     player.setScaleX(player.getScaleX() * -1);
                     reverse = true;
                 }
                 else{
-                    System.out.println("up");
+                    //System.out.println("up");
                     player.setRotate(player.getRotate() + 180);
                     player.setY(player.getY() - 30 );
                     player.setScaleX(player.getScaleX() * -1);
@@ -117,7 +133,6 @@ public class PlayPageController implements Initializable {
                 }
             }
         });
-        //collect_cherry_func();
     }
 
     private void dropStick() throws InterruptedException {
@@ -131,23 +146,23 @@ public class PlayPageController implements Initializable {
         temp = player.getX();
         // the function below moves the avatar from the start pillar to the end pillar
         Timeline moving_avatar = new Timeline(new KeyFrame(Duration.millis(75), e -> {
-            System.out.println(player.getX() - temp);
+            //System.out.println(player.getX() - temp);
 
             if(level_number == 1){
                 if (cherry_collected == false && reverse && player.getX() <= 120 && player.getX()>=100 ) {
-                    System.out.println("check");
+                    //System.out.println("check");
                     cherry_collected = true;
                     cherry.setVisible(false);
                 }
             }
             else{
                 if (cherry_collected == false && reverse && player.getX() - temp <= 177 && player.getX()- temp>=150 ) {
-                    System.out.println("check");
+                    //System.out.println("check");
                     cherry_collected = true;
                     cherry.setVisible(false);
                 }
                 else{
-                    System.out.println("jhfkudh");
+                    //System.out.println("jhfkudh");
                 }
             }
 
@@ -169,6 +184,62 @@ public class PlayPageController implements Initializable {
                     go_to_next_level(distance);
                 }
                 else {
+                    if(current_cherry_count>=1){
+                        current_cherry_count = current_cherry_count - 1;
+                        System.out.println("dead-1");
+                        FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
+                        Parent root = null;
+                        try {
+                            root = fxmlLoader.load();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        Scene scene = new Scene(root, 500, 550);
+                        Stage currentStage = (Stage) anchorPane.getScene().getWindow();
+                        currentStage.setScene(scene);
+                        currentStage.show();
+                    }
+                    else{
+                        // the player has died
+                        /*
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Game Over");
+                        alert.setHeaderText(null);
+                        alert.setContentText("You have died. Game Over.");
+                        alert.show();
+                        System.exit(0);
+                         */
+
+                        FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("exit-page.fxml"));
+                        Parent root = null;
+                        try {
+                            root = fxmlLoader.load();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        Scene scene = new Scene(root, 500, 550);
+                        Stage currentStage = (Stage) anchorPane.getScene().getWindow();
+                        currentStage.setScene(scene);
+                        currentStage.show();
+                    }
+                }
+            }
+            else if(reverse == true){
+                if(current_cherry_count>=2){
+                    current_cherry_count = current_cherry_count - 1;
+                    FXMLLoader fxmlLoader = new FXMLLoader(LandingPage.class.getResource("revive-page.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, 500, 550);
+                    Stage currentStage = (Stage) anchorPane.getScene().getWindow();
+                    currentStage.setScene(scene);
+                    currentStage.show();
+                }
+                else{
                     // the player has died
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Game Over");
@@ -177,15 +248,6 @@ public class PlayPageController implements Initializable {
                     alert.show();
                     System.exit(0);
                 }
-            }
-            else if(reverse == true){
-                // the player has died
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Game Over");
-                alert.setHeaderText(null);
-                alert.setContentText("You have died. Game Over.");
-                alert.show();
-                System.exit(0);
             }
         });
     }
@@ -211,7 +273,7 @@ public class PlayPageController implements Initializable {
             anchorPane.getChildren().add(next_pillar);
             pillar_list.add(next_pillar);
             level_number++;
-            System.out.println(level_number);
+            //System.out.println(level_number);
             score_count.setText(String.valueOf(current_score + 100));
             current_score = current_score + 100;
 

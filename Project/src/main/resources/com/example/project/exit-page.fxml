@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<!-- exit-page.fxml -->
+
+<AnchorPane prefHeight="485.0" prefWidth="401.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.ExitPage">
+    <ImageView fitHeight="568.0" fitWidth="498.0" pickOnBounds="true">
+        <Image url="@../../../Images/end.png" />
+    </ImageView>
+    <Button layoutX="195.0" layoutY="312.0" onMouseClicked="#onExitButtonClicked" text="EXIT">
+        <font>
+            <Font name="Futura Bold" size="25.0" />
+        </font>
+    </Button>
+    <Text layoutX="108.0" layoutY="157.0" strokeType="OUTSIDE" strokeWidth="0.0" text="YOU DIED!" textAlignment="CENTER" wrappingWidth="281.578125">
+        <font>
+            <Font name="Futura Bold" size="50.0" />
+        </font>
+    </Text>
+</AnchorPane>
