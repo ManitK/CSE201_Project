@@ -55,6 +55,8 @@ public class PlayPageController implements Initializable {
     // DESIGN PATTERNS USED -
     // 1. FACTORY : TO GET DIFFERENT HANDLERS FOR DIFFERENT OBJECTS
     // 2. FLYWEIGHT : FOR CREATING UNIQUE PILLARS OF DIFFERENT DIMENSION FOR EACH NEW LEVEL
+    // 3. ADAPTER
+    
     HandlerFactory FACTORY = new HandlerFactory();
     Flyweight PillarFlyweight = new Flyweight();
 
@@ -101,6 +103,7 @@ public class PlayPageController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        testrunner runner = new testrunner();
 
         pillar1_controller = FACTORY.getHandler("PILLAR");
         pillar2_controller = FACTORY.getHandler("PILLAR");
